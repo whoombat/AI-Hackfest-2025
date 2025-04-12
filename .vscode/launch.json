@@ -1,0 +1,59 @@
+{
+    "version": "0.2.0",
+    "preLaunchTask": "Select Configuration",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File with Arguments",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": "${command:pickArgs}"
+        },
+        {
+            "name": "StrollStory: Generate Cringe Montreal Story",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/stroll_story.py",
+            "args": [
+                "--gpx",
+                "inputs/montreal.gpx",
+                "--tone",
+                "cringe",
+                "--focus",
+                "landmarks"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "StrollStory: Generate Poetic Toronto Story",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/stroll_story.py",
+            "args": [
+                "--gpx",
+                "inputs/toronto.gpx",
+                "--tone",
+                "poetic",
+                "--focus",
+                "colors"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "StrollStory: Generate Neutral Ottawa Story",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/stroll_story.py",
+            "args": [
+                "--gpx",
+                "inputs/ottawa.gpx",
+                "--tone",
+                "neutral",
+                "--focus",
+                "parks"
+            ],
+            "console": "integratedTerminal"
+        }
+    ]
+}
