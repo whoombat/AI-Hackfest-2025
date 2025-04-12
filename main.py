@@ -43,14 +43,6 @@ class Length(Enum):
     DETAILED = "detailed"
 
 
-# Example coordinates (latitude, longitude, timestamp)
-coordinates = [(45.43025807431552, -75.70863767151599, "2025-04-11 10:00:00"),
-               (45.429000675621126, -75.70033355227784, "2025-04-11 10:05:00"),
-               (45.427502301655224, -75.6970719860959, "2025-04-11 10:08:00"),
-               (45.42494970371503, -75.69519443975263, "2025-04-11 10:15:00"),
-               (45.42386537938022, -75.69826288691044, "2025-04-11 10:20:00"),
-               (45.42600388793949, -75.69912655813056, "2025-04-11 10:30:00")]
-
 def get_journal_prompt(route_data, tone, focus, length):
     """Generate a journal prompt."""
     return f"""Summarize a walk as a {length} journal entry with a {tone} tone that followed these GPS
@@ -65,11 +57,11 @@ entry."""
 
 def get_image_prompt(journal_entry):
     """Generate an image prompt based on the journal entry."""
-    return f"""Generate a sketch-style image of one of the locations mentioned in this journal
+    return f"""Generate a sketch-style image with no added text of one of the locations mentioned in this journal
 entry: {journal_entry}"""
 
 
-def parse_gpx_to_text(file_path):
+def parse_gpx(file_path):
     """
     Parses a GPX file and extracts relevant information as a text string.
 
@@ -77,19 +69,31 @@ def parse_gpx_to_text(file_path):
         file_path (str): The path to the GPX file.
 
     Returns:
-        str: A text representation of the GPX data, including track points
-             (latitude, longitude, elevation, time), waypoints, and route
-             points. Returns None if the file cannot be opened or parsed.
+        The gpx data. Returns None if the file cannot be opened or parsed.
     """
     try:
         with open(file_path, 'r') as gpx_file:
-            gpx = gpxpy.parse(gpx_file)
+            return gpxpy.parse(gpx_file)
     except FileNotFoundError:
         print(f"Error: File not found at {file_path}")
         return None
     except gpxpy.gpx.GPXException as e:
         print(f"Error parsing GPX file: {e}")
         return None
+
+
+def convert_gpx_to_text(gpx):
+    """
+    Parses a GPX file and extracts relevant information as a text string.
+
+    Args:
+        The gpx data.
+
+    Returns:
+        str: A text representation of the GPX data, including track points
+             (latitude, longitude, elevation, time), waypoints, and route
+             points. Returns None if the file cannot be opened or parsed.
+    """
 
     output_text = "GPX Data:\n"
 
@@ -139,10 +143,14 @@ def parse_gpx_to_text(file_path):
 if __name__ == "__main__":
     load_dotenv()
     GPX_FILE_PATH = 'inputs/ottawa.gpx'
-    parsed_route_data = parse_gpx_to_text(GPX_FILE_PATH)
-    default_tone = Tone.FUN
+    gpx_data = parse_gpx(GPX_FILE_PATH)
+    if gpx_data is not None:
+        parsed_route_data = convert_gpx_to_text(gpx_data)
+    else:
+        raise ValueError(f"Unable to parse GPX data in '{GPX_FILE_PATH}'.")
+    default_tone = Tone.CRINGE
     default_focus = Focus.LANDMARKS
-    default_length = Length.DETAILED
+    default_length = Length.MEDIUM
 
     api_key = os.getenv("GEMINI_API_KEY")
     if api_key is None:
@@ -183,13 +191,29 @@ if __name__ == "__main__":
 
     # print(f"Walk Summary: {JOURNAL_ENTRY.text}") for debugging
 
+    #build a coordinates list for the map using the parsed gpx data
+    coordinates = []
+    for track in gpx_data.tracks:
+        for segment in track.segments:
+            for point in segment.points:
+                coordinates.append((point.latitude, point.longitude, point.time))
 
     # Create a map centered around the first point
     m = folium.Map(location=(coordinates[0][0], coordinates[0][1]), zoom_start=14)
 
-    # Add markers for each point
-    for coord in coordinates:
-        folium.Marker((coord[0], coord[1]), popup=f"Time: {coord[2]}").add_to(m)
+    start_coord = (coordinates[0][0], coordinates[0][1])
+    end_coord = (coordinates[-1][0], coordinates[-1][1])
+    is_loop = start_coord == end_coord
+
+    for i, coord in enumerate(coordinates):
+        COLOUR = 'blue'  # Default for non-start/end
+
+        if i == 0:
+            COLOUR = 'green'
+        elif i == len(coordinates) - 1:
+            COLOUR = 'purple' if is_loop else 'red'
+
+        folium.Marker((coord[0], coord[1]), popup=f"Time: {coord[2]}", icon=folium.Icon(color=COLOUR)).add_to(m)
 
     # Add a Polyline to connect the points
     folium.PolyLine([(coord[0], coord[1]) for coord in coordinates], color="blue", weight=5).add_to(m)
