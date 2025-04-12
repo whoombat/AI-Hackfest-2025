@@ -2,10 +2,14 @@
 
 import uuid  # For generating unique filenames
 import os  # For environment variables
-import folium  # For map visualization
+import base64
+from io import BytesIO
 from enum import Enum
+import folium  # For map visualization
 from google import genai    # For Google Gemini API
+from google.genai import types
 from dotenv import load_dotenv  # For loading environment variables
+from PIL import Image
 
 load_dotenv()
 
@@ -44,25 +48,51 @@ coordinates = [(45.43025807431552, -75.70863767151599, "2025-04-11 10:00:00"),
                (45.42494970371503, -75.69519443975263, "2025-04-11 10:15:00"),
                (45.42386537938022, -75.69826288691044, "2025-04-11 10:20:00"),
                (45.42600388793949, -75.69912655813056, "2025-04-11 10:30:00")]
-tone = Tone.NEUTRAL
-focus = Focus.COLORS
+tone = Tone.POETIC
+focus = Focus.LANDMARKS
 
 client = genai.Client(api_key=api_key)
 
-PROMPT = f"""Summarize a walk as a journal entry with a {tone} tone that followed these GPS
+JOURNAL_PROMPT = f"""Summarize a walk as a journal entry with a {tone} tone that followed these GPS
 coordinates with timestamp: {str(coordinates)} (don't report the coordinates or specific timestamps
 back (start and end time okay). Try to focus on {focus} and otherwise identify one major landmark,
 park, or body of water near each coordinate, and provide a fun fact about each (but don't
-explicitly say fun fact each time). Comment on pace based on time and disctance covered. Include a
-picture of one location on the route and also incorpoate the weather. Make the output HTML
-formatted. Don't provide anything after the HTML, nor a blurb at start, just the journal entry."""
+explicitly say fun fact each time). Comment on pace based on time and disctance covered. Incorpoate
+the weather. Make the output HTML formatted. Don't provide anything after the HTML, nor a blurb at
+start, just the journal entry."""
 
 # Feed data to Gemini AI to generate journal entry
-ai_summary = client.models.generate_content(model="gemini-2.0-flash",
-                                            contents=PROMPT)
+JOURNAL_ENTRY = client.models.generate_content(model="gemini-2.0-flash",
+                                            contents=JOURNAL_PROMPT)
+
+# IMAGE_PROMPT = f"""Generate an image of a landscape based on the locations at these coordinates
+# with timestamp: {str(coordinates[0])}."""
+IMAGE_PROMPT = f"""Generate an no-text sketch-style image of one of the locations mentioned in this
+journal entry: {JOURNAL_ENTRY.text}."""
+
+response = client.models.generate_content(
+    model='gemini-2.0-flash-exp',
+    contents=IMAGE_PROMPT,
+    config=types.GenerateContentConfig(
+       response_modalities=['Text', 'Image']
+     )
+)
+
+HTML_IMAGE = ""
+
+for part in response.candidates[0].content.parts:
+    if part.inline_data is not None:
+        image = Image.open(BytesIO((part.inline_data.data)))
+        buffered = BytesIO()
+        image.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
+
+        HTML_IMAGE += f'<img src="data:image/png;base64,{img_str}" alt="Generated Image"><br><br>'
+    else:
+        print("No image data found in the response.")
 
 # Output result for debugging
-# print(f"Walk Summary: {ai_summary.text}")
+# print(f"Walk Summary: {JOURNAL_ENTRY.text}")
 
 
 # Create a map centered around the first point
@@ -76,14 +106,14 @@ for coord in coordinates:
 folium.PolyLine([(coord[0], coord[1]) for coord in coordinates], color="blue", weight=5).add_to(m)
 
 # Get the HTML representation of the map
-map_html = m.get_root().render()
+MAP_HTML = m.get_root().render()
 
 # Inject the AI summary
-summary_html = f"<div style='font-family: Arial; margin: 20px;'><h2>Walk Summary</h2><p>\
-    {ai_summary.text}</p></div>"
-custom_html = map_html.replace("<body>", f"<body>{summary_html}")
+JOURNAL_HTML = f"<div style='font-family: Arial; margin: 20px;'><h2>Walk Summary</h2><p>\
+    {JOURNAL_ENTRY.text}</p></div>"
+OUTPUT_HTML = MAP_HTML.replace("<body>", f"<body>{JOURNAL_HTML}{HTML_IMAGE}")
 
 MAP_FILEPATH = os.path.join(OUTPUT_DIR, f"trip_{uuid.uuid4().hex}.html")
 # Save the updated HTML directly
 with open(MAP_FILEPATH, "w") as file:
-    file.write(custom_html)
+    file.write(OUTPUT_HTML)
