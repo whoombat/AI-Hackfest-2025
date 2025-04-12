@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Travel Trips</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        /* Style for the iframes */
+        iframe {
+            width: 100%; /* Make the iframe take up the full width of its container */
+            height: 400px; /* Give it a default height */
+            border: 1px solid #ccc; /* Add a border for visual separation */
+            margin-bottom: 20px; /* Add space below each iframe */
+            display: none;  /*hide iframes by default*/
+        }
+        .trips-list {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #b0e0e6;
+            margin-bottom: 20px;
+        }
+        .trips-list ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        .trips-list li {
+            margin-bottom: 10px;
+        }
+        .trips-list li a{
+            color: #0078d7;
+            text-decoration: none;
+        }
+         .trips-list li a:hover {
+            color: #003660;
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>My Travel Trips</h1>
+    <p>Here are some of my travel destinations:</p>
+
+    <div class="trips-list">
+        <ul>
+            <li><a href="#" data-target="trip1">Trip 1</a></li>
+            <li><a href="#" data-target="trip2">Trip 2</a></li>
+            <li><a href="#" data-target="trip3">Trip 3</a></li>
+        </ul>
+    </div>
+
+    <iframe id="trip1" src="trips/trip_72aefb625143457e865bf053b1a72ee1.html"></iframe>
+    <iframe id="trip2" src="trips/trip_26a5fe751dca47ea99fcbc03d1e8716c.html"></iframe>
+    <iframe id="trip3" src="trips/trip_dee55242ed8b4a1e9fa8ed79be0ba026.html"></iframe>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tripLinks = document.querySelectorAll('.trips-list a');
+            const iframes = document.querySelectorAll('iframe');
+
+            tripLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent the default link behavior
+                    const targetId = this.dataset.target; // Get the target ID from the data-target attribute
+
+                    // Hide all iframes
+                    iframes.forEach(iframe => {
+                        iframe.style.display = 'none';
+                    });
+
+                    // Show the selected iframe
+                    const targetIframe = document.getElementById(targetId);
+                    if (targetIframe) {
+                        targetIframe.style.display = 'block';
+                    }
+                });
+            });
+            //show the first iframe
+            if (iframes.length > 0) {
+               iframes[0].style.display = 'block';
+             }
+        });
+    </script>
+</body>
+</html>
