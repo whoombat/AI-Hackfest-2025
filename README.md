@@ -30,5 +30,5 @@ Using one of the sample GPX files,
 Output saved to 'outputs\trip_3380f6bf42914675a82d8cfa1f6dcc98.html'
 ```
 
-The `index.html` can be used to view the sample outputs, visible at https://whoombat.github.io/AI-Hackfest-2025/index.html
+The `index.html` can be used to view the sample outputs, visible at https://whoombat.github.io/StrollStory-AI-Hackfest-2025/index.html
 
