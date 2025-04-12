@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AI GPX Generator" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.topografix.com/GPX/1/1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Downtown Montreal Morning Walk (2 Hours)</name>
+    <time>2025-04-12T14:15:00Z</time>
+    <desc>A sample 2-hour walk around downtown Montreal on the morning of April 12, 2025.</desc>
+    <author>
+      <name>AI Assistant</name>
+    </author>
+  </metadata>
+  <trk>
+    <name>Downtown Montreal Walk</name>
+    <trkseg>
+      <trkpt lat="45.5032" lon="-73.5697">
+        <time>2025-04-12T14:20:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5040" lon="-73.5710">
+        <time>2025-04-12T14:25:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5050" lon="-73.5725">
+        <time>2025-04-12T14:30:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5060" lon="-73.5740">
+        <time>2025-04-12T14:35:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5065" lon="-73.5755">
+        <time>2025-04-12T14:40:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5060" lon="-73.5770">
+        <time>2025-04-12T14:45:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5050" lon="-73.5785">
+        <time>2025-04-12T14:50:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5040" lon="-73.5800">
+        <time>2025-04-12T14:55:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5030" lon="-73.5810">
+        <time>2025-04-12T15:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5020" lon="-73.5805">
+        <time>2025-04-12T15:05:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5010" lon="-73.5795">
+        <time>2025-04-12T15:10:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5005" lon="-73.5780">
+        <time>2025-04-12T15:15:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5010" lon="-73.5765">
+        <time>2025-04-12T15:20:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5020" lon="-73.5750">
+        <time>2025-04-12T15:25:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5030" lon="-73.5735">
+        <time>2025-04-12T15:30:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5035" lon="-73.5720">
+        <time>2025-04-12T15:35:00Z</time>
+      </trkpt>
+      <trkpt lat="45.5032" lon="-73.5697">
+        <time>2025-04-12T16:20:00Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

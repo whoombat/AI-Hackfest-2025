@@ -106,8 +106,6 @@ def parse_gpx_to_text(file_path):
                         output_text += f"Elev: {point.elevation}, "
                     if point.time is not None:
                         output_text += f"Time: {point.time.isoformat()} UTC\n"
-    else:
-        output_text += "\nNo tracks found.\n"
 
     # Process waypoints
     if gpx.waypoints:
@@ -120,8 +118,6 @@ def parse_gpx_to_text(file_path):
                 output_text += f"    Time: {waypoint.time.isoformat()} UTC\n"
             if waypoint.description:
                 output_text += f"    Description: {waypoint.description}\n"
-    else:
-        output_text += "\nNo waypoints found.\n"
 
     # Process routes
     if gpx.routes:
@@ -137,18 +133,16 @@ def parse_gpx_to_text(file_path):
                     output_text += f"Time: {point.time.isoformat()} UTC\n"
                 if point.description:
                     output_text += f"      Description: {point.description}\n"
-    else:
-        output_text += "\nNo routes found.\n"
 
     return output_text
 
 if __name__ == "__main__":
     load_dotenv()
-    GPX_FILE_PATH = 'inputs/ottawa.gpx'  # Replace with the actual path to your GPX file
+    GPX_FILE_PATH = 'inputs/ottawa.gpx'
     parsed_route_data = parse_gpx_to_text(GPX_FILE_PATH)
-    default_tone = Tone.POETIC
+    default_tone = Tone.FUN
     default_focus = Focus.LANDMARKS
-    default_length = Length.SHORT
+    default_length = Length.DETAILED
 
     api_key = os.getenv("GEMINI_API_KEY")
     if api_key is None:
@@ -156,58 +150,61 @@ if __name__ == "__main__":
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    if parsed_route_data:
-        print(parsed_route_data)
+    if parsed_route_data is None:
+        raise ValueError("unable to retrieve gpx trip data.")
 
-        client = genai.Client(api_key=api_key)
-        # Feed data to Gemini AI to generate journal entry
-        JOURNAL_ENTRY = client.models.generate_content(model="gemini-2.0-flash",
-                                                    contents=get_journal_prompt(parsed_route_data, default_tone, default_focus, default_length))
+    #print(parsed_route_data) # For debugging
 
-        response = client.models.generate_content(
-            model='gemini-2.0-flash-exp',
-            contents=get_image_prompt(JOURNAL_ENTRY.text),
-            config=types.GenerateContentConfig(
-            response_modalities=['Text', 'Image']
-            )
+    client = genai.Client(api_key=api_key)
+    # Feed data to Gemini AI to generate journal entry
+    JOURNAL_ENTRY = client.models.generate_content(model="gemini-2.0-flash",
+                                                contents=get_journal_prompt(parsed_route_data, default_tone, default_focus, default_length))
+
+    response = client.models.generate_content(
+        model='gemini-2.0-flash-exp',
+        contents=get_image_prompt(JOURNAL_ENTRY.text),
+        config=types.GenerateContentConfig(
+        response_modalities=['Text', 'Image']
         )
+    )
 
-        HTML_IMAGE = ""
+    HTML_IMAGE = ""
 
-        for part in response.candidates[0].content.parts:
-            if part.inline_data is not None:
-                image = Image.open(BytesIO((part.inline_data.data)))
-                buffered = BytesIO()
-                image.save(buffered, format="PNG")
-                img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
+    for part in response.candidates[0].content.parts:
+        if part.inline_data is not None:
+            image = Image.open(BytesIO((part.inline_data.data)))
+            buffered = BytesIO()
+            image.save(buffered, format="PNG")
+            img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
 
-                HTML_IMAGE += f'<img src="data:image/png;base64,{img_str}" alt="Generated Image"><br><br>'
-            else:
-                print("No image data found in the response.")
+            HTML_IMAGE += f'<img src="data:image/png;base64,{img_str}" alt="Generated Image"><br><br>'
+        else:
+            print("No image data found in the response.")
 
-        # Output result for debugging
-        # print(f"Walk Summary: {JOURNAL_ENTRY.text}")
+    # print(f"Walk Summary: {JOURNAL_ENTRY.text}") for debugging
 
 
-        # Create a map centered around the first point
-        m = folium.Map(location=(coordinates[0][0], coordinates[0][1]), zoom_start=14)
+    # Create a map centered around the first point
+    m = folium.Map(location=(coordinates[0][0], coordinates[0][1]), zoom_start=14)
 
-        # Add markers for each point
-        for coord in coordinates:
-            folium.Marker((coord[0], coord[1]), popup=f"Time: {coord[2]}").add_to(m)
+    # Add markers for each point
+    for coord in coordinates:
+        folium.Marker((coord[0], coord[1]), popup=f"Time: {coord[2]}").add_to(m)
 
-        # Add a Polyline to connect the points
-        folium.PolyLine([(coord[0], coord[1]) for coord in coordinates], color="blue", weight=5).add_to(m)
+    # Add a Polyline to connect the points
+    folium.PolyLine([(coord[0], coord[1]) for coord in coordinates], color="blue", weight=5).add_to(m)
 
-        # Get the HTML representation of the map
-        MAP_HTML = m.get_root().render()
+    # Get the HTML representation of the map
+    MAP_HTML = m.get_root().render()
 
-        # Inject the AI summary
-        JOURNAL_HTML = f"<div style='font-family: Arial; margin: 20px;'><h2>Walk Summary</h2><p>\
-            {JOURNAL_ENTRY.text}</p></div>"
-        OUTPUT_HTML = MAP_HTML.replace("<body>", f"<body>{JOURNAL_HTML}{HTML_IMAGE}")
+    # Inject the AI summary
+    JOURNAL_HTML = f"<div style='font-family: Arial; margin: 20px;'><h2>Walk Summary</h2><p>\
+        {JOURNAL_ENTRY.text}</p></div>"
+    OUTPUT_HTML = MAP_HTML.replace("<body>", f"<body>{JOURNAL_HTML}{HTML_IMAGE}")
 
-        MAP_FILEPATH = os.path.join(OUTPUT_DIR, f"trip_{uuid.uuid4().hex}.html")
-        # Save the updated HTML directly
-        with open(MAP_FILEPATH, "w", encoding="utf-8") as file:
-            file.write(OUTPUT_HTML)
+    OUTPUT_FILEPATH = os.path.join(OUTPUT_DIR, f"trip_{uuid.uuid4().hex}.html")
+    # Save the updated HTML directly
+    with open(OUTPUT_FILEPATH, "w", encoding="utf-8") as file:
+        file.write(OUTPUT_HTML)
+
+    print(f"Output saved to '{OUTPUT_FILEPATH}'")
