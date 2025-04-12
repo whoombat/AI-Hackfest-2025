@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AI GPX Generator" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.topografix.com/GPX/1/1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Downtown Ottawa Morning Walk (2 Hours)</name>
+    <time>2025-04-12T13:56:00Z</time>
+    <desc>A sample 2-hour walk around downtown Ottawa on the morning of April 12, 2025.</desc>
+    <author>
+      <name>AI Assistant</name>
+    </author>
+  </metadata>
+  <trk>
+    <name>Downtown Ottawa Walk Track (2 Hours)</name>
+    <trkseg>
+      <trkpt lat="45.4235" lon="-75.6979">
+        <time>2025-04-12T14:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4245" lon="-75.7005">
+        <time>2025-04-12T14:05:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4255" lon="-75.7030">
+        <time>2025-04-12T14:10:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4260" lon="-75.7055">
+        <time>2025-04-12T14:15:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4255" lon="-75.7080">
+        <time>2025-04-12T14:20:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4245" lon="-75.7100">
+        <time>2025-04-12T14:25:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4235" lon="-75.7115">
+        <time>2025-04-12T14:30:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4225" lon="-75.7125">
+        <time>2025-04-12T14:35:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4215" lon="-75.7130">
+        <time>2025-04-12T14:40:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4205" lon="-75.7125">
+        <time>2025-04-12T14:45:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4195" lon="-75.7115">
+        <time>2025-04-12T14:50:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4185" lon="-75.7100">
+        <time>2025-04-12T14:55:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4180" lon="-75.7085">
+        <time>2025-04-12T15:00:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4185" lon="-75.7070">
+        <time>2025-04-12T15:05:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4195" lon="-75.7055">
+        <time>2025-04-12T15:10:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4205" lon="-75.7040">
+        <time>2025-04-12T15:15:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4215" lon="-75.7025">
+        <time>2025-04-12T15:20:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4225" lon="-75.7010">
+        <time>2025-04-12T15:25:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4235" lon="-75.6995">
+        <time>2025-04-12T15:30:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4240" lon="-75.6985">
+        <time>2025-04-12T15:35:00Z</time>
+      </trkpt>
+      <trkpt lat="45.4235" lon="-75.6979">
+        <time>2025-04-12T16:00:00Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
